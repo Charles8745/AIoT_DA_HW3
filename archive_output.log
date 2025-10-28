@@ -1,0 +1,10 @@
+
+Proposal warnings in proposal.md (non-blocking):
+  ⚠ Why section should not exceed 1000 characters
+Task status: 0/36 tasks
+Warning: 36 incomplete task(s) found. Continuing due to --yes flag.
+
+Specs to update:
+  visualization: create
+visualization: target spec does not exist; only ADDED requirements are allowed for new specs.
+Aborted. No files were changed.
