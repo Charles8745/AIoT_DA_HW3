@@ -20,7 +20,6 @@ from pathlib import Path
 
 # Import new UI/UX modules
 try:
-    from themes import get_theme_manager
     from notifications import get_toast_manager, NotificationLevel
     from performance_monitor import get_performance_monitor, timeit
     from caching import get_cache_manager
@@ -562,36 +561,68 @@ def page_feature_importance():
     st.markdown(NEUMORPHISM_CSS, unsafe_allow_html=True)
     st.markdown("### 🎯 Top Tokens by Class")
     
-    if not st.session_state.data_loaded:
-        st.warning("No data loaded. Please load data first.")
-        return
-    
-    # Load data
-    try:
-        df_train = pd.read_csv(st.session_state.train_path) if st.session_state.train_path else None
-        if df_train is None:
-            st.warning("Training data not available.")
-            return
-    except Exception as e:
-        st.error(f"Error loading data: {e}")
-        return
-    
     # Top N tokens slider
     top_n = st.slider("Top N Tokens:", 5, 30, 15)
     
+    # Try to load data from evaluators or create sample data
+    try:
+        # Try to load from dataset files
+        dataset_options = []
+        datasets_dir = Path('./datasets')
+        
+        if datasets_dir.exists():
+            dataset_options = [f.name for f in datasets_dir.glob('*.csv')]
+        
+        if dataset_options:
+            selected_dataset = st.selectbox("Select Dataset:", dataset_options)
+            df_train = pd.read_csv(datasets_dir / selected_dataset)
+        else:
+            # Create sample data if no datasets available
+            st.info("No datasets found. Using sample data for demonstration.")
+            df_train = pd.DataFrame({
+                'text': [
+                    'Click here to claim your prize',
+                    'Hello how are you doing today',
+                    'You have won a free iPhone',
+                    'Can we meet tomorrow for coffee',
+                    'Limited offer expires soon act now',
+                    'Did you get my email yesterday',
+                ] * 10,
+                'label': ['spam', 'ham', 'spam', 'ham', 'spam', 'ham'] * 10,
+            })
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        # Create fallback sample data
+        df_train = pd.DataFrame({
+            'text': [
+                'Click here to claim your prize',
+                'Hello how are you doing today',
+                'You have won a free iPhone',
+                'Can we meet tomorrow for coffee',
+            ] * 5,
+            'label': ['spam', 'ham', 'spam', 'ham'] * 5,
+        })
+    
     # Process tokens for each class
-    from defs import get_tokens
+    try:
+        from defs import get_tokens
+    except ImportError:
+        # Fallback tokenizer if defs not available
+        def get_tokens(text):
+            return text.lower().split()
     
     ham_tokens = []
     spam_tokens = []
     
     for idx, row in df_train.iterrows():
-        tokens = get_tokens(row.get('text', row.get('message', '')))
+        text = row.get('text', row.get('message', ''))
         label = row.get('label', row.get('class', ''))
         
-        if label == 0 or label == 'ham':
+        tokens = get_tokens(text) if callable(locals().get('get_tokens')) else text.lower().split()
+        
+        if label == 0 or str(label).lower() == 'ham':
             ham_tokens.extend(tokens)
-        elif label == 1 or label == 'spam':
+        elif label == 1 or str(label).lower() == 'spam':
             spam_tokens.extend(tokens)
     
     # Count token frequencies
@@ -762,8 +793,7 @@ def main():
     
     initialize_session_state()
     
-    # Initialize UI/UX managers
-    theme_manager = get_theme_manager()
+    # Initialize UI/UX managers (theme removed, keeping toast and performance)
     toast_manager = get_toast_manager()
     perf_monitor = get_performance_monitor()
     
@@ -787,17 +817,6 @@ def main():
     # Sidebar settings
     st.sidebar.markdown("---")
     st.sidebar.markdown("## ⚙️ Settings")
-    
-    # Theme toggle
-    col1, col2 = st.sidebar.columns([1, 2])
-    with col1:
-        st.markdown("Theme:")
-    with col2:
-        current_theme = theme_manager.get_theme_name()
-        theme_icon = "🌙" if current_theme == "light" else "☀️"
-        if st.button(f"{theme_icon} Toggle Theme", use_container_width=True):
-            new_theme = theme_manager.toggle_theme()
-            toast_manager.show_success(f"Theme changed to {new_theme} mode!")
     
     # Load sample evaluators for demonstration
     st.sidebar.markdown("---")
