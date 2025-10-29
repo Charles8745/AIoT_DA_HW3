@@ -1,226 +1,449 @@
-# 🚨 Spam Email Classifier# Spam Email Classifier (AIoT-DA2025 HW3)# 🎨 AIoT Data Analysis & Visualization Suite
+# 🚨 Spam Email Classifier# 🚨 Spam Email Classifier# Spam Email Classifier (AIoT-DA2025 HW3)# 🎨 AIoT Data Analysis & Visualization Suite
 
 
 
-**AIoT Data Analytics 2025 - Homework 3** | Author: Chen Xulin (陳旭霖)
+**AIoT Data Analytics 2025 - HW3** | Author: Chen Xulin (陳旭霖)
 
 
 
-![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red?logo=streamlit)**作者**: 陳旭霖  **完整的機器學習模型評估和互動式可視化系統**
+![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red?logo=streamlit)**AIoT Data Analytics 2025 - Homework 3** | Author: Chen Xulin (陳旭霖)
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
 
+
+
+---
+
+![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red?logo=streamlit)**作者**: 陳旭霖  **完整的機器學習模型評估和互動式可視化系統**
+
+## 🌐 Live Demo
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
+
+**Online**: [https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/](https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/)
+
 ![License](https://img.shields.io/badge/License-MIT-green)**課程**: AIoT Data Analytics 2025 - 作業 3
 
+無需安裝，直接體驗！
 
+
+
+---
 
 ---[![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue)](https://www.python.org/)
 
-
-
-## 🌐 Live Demo---[![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red)](https://streamlit.io/)
-
-
-
-**Online**: [https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/](https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+## 🚀 Quick Start
 
 
 
-*無需安裝，直接體驗完整的互動式儀表板！*## 🌐 Demo Site
+### 線上使用 ✨
+
+打開 Demo 連結，自動加載模型，開始探索。## 🌐 Live Demo---[![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red)](https://streamlit.io/)
 
 
-
----## 📋 目錄
-
-
-
-## 📖 Quick Start**Live Demo**: [https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/](https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/)
-
-
-
-### 線上使用（推薦）✨- [功能概述](#功能概述)
-
-```
-
-1️⃣  打開 Demo 連結打開連結即可立即體驗完整的交互式儀表板，無需本地安裝！- [快速開始](#快速開始)
-
-2️⃣  自動加載 4 個樣本模型
-
-3️⃣  開始探索儀表板- [安裝指南](#安裝指南)
-
-```
-
----- [使用方式](#使用方式)
 
 ### 本地運行
 
-```bash- [項目結構](#項目結構)
+```bash
 
-# 克隆
+# 克隆**Online**: [https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/](https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-git clone https://github.com/Charles8745/AIoT_DA_HW3.git && cd AIoT_DA_HW3## 📋 Table of Contents- [實現細節](#實現細節)
+git clone https://github.com/Charles8745/AIoT_DA_HW3.git
+
+cd AIoT_DA_HW3
 
 
 
-# 安裝依賴- [測試](#測試)
+# 安裝*無需安裝，直接體驗完整的互動式儀表板！*## 🌐 Demo Site
 
-pip install -r config/requirements.txt
+pip install -r requirements.txt
 
-- [Introduction](#introduction)- [貢獻指南](#貢獻指南)
+
 
 # 運行
 
-streamlit run app/streamlit_app.py- [How to Use](#how-to-use)
+cd sources---## 📋 目錄
+
+streamlit run streamlit_app.py
 
 
 
-# 打開 http://localhost:8501- [Source Reference](#source-reference)---
+# 打開 http://localhost:8501
 
-```
+```## 📖 Quick Start**Live Demo**: [https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/](https://aiotdahw3-gapdh7jzxg5kyj9x7xate4.streamlit.app/)
 
-- [Setup](#setup)
 
-📚 詳細步驟 → [INSTALL.md](docs/INSTALL.md)
-
-- [Commands](#commands)## 🚀 功能概述
 
 ---
 
-- [Project Structure](#project-structure)
 
-## 🎯 功能介紹
 
-- [Features](#features)### Phase 1: Core Visualization Engine
-
-| 頁面 | 功能 |
-
-|------|------|**`sources/visualization.py`** - 10 個專業可視化函數
-
-| 📊 **Overview** | 所有模型性能儀表板 |
-
-| 📈 **Metrics Explorer** | 深入分析特定模型指標 |---
-
-| ⚖️ **Model Comparison** | 模型性能對比（雷達圖） |
-
-| 🎮 **Live Playground** | 實時郵件分類推理 || 函數 | 功能 | 輸出 |
-
-| 🎯 **Features** | 高頻詞彙分析 |
-
-| 📋 **Data Overview** | 數據集統計瀏覽 |## 📖 Introduction|------|------|------|
+## 📊 功能概覽### 線上使用（推薦）✨- [功能概述](#功能概述)
 
 
 
-更多示例 → [USAGE.md](examples/USAGE.md)| `plot_training_curves()` | 訓練/驗證損失 & 準確度 | 2-panel 子圖 |
+| 頁面 | 功能 |```
 
+|------|------|
 
+| 📊 Overview | 模型性能儀表板 |1️⃣  打開 Demo 連結打開連結即可立即體驗完整的交互式儀表板，無需本地安裝！- [快速開始](#快速開始)
 
----### 專案目的| `plot_feature_importance()` | 特徵重要性分析 | 排序條形圖 |
+| 📈 Metrics Explorer | 深入分析指標 |
 
+| ⚖️ Model Comparison | 模型對比（雷達圖） |2️⃣  自動加載 4 個樣本模型
 
+| 🎮 Live Playground | 實時郵件分類 |
 
-## 🤖 機器學習模型| `plot_confusion_matrices_grid()` | 多模型混淆矩陣 | M×N 網格 |
+| 🎯 Features | 高頻詞彙分析 |3️⃣  開始探索儀表板- [安裝指南](#安裝指南)
 
-
-
-```本專案是一個**垃圾郵件分類系統**，用於演示多種機器學習模型在文本分類任務上的應用。系統包含以下核心功能：| `plot_roc_curves_overlay()` | ROC 曲線比較 | AUC 標籤 |
-
-Logistic Regression  ← 線性基準
-
-Decision Tree        ← 非線性決策| `plot_data_overview()` | 資料集統計 | 4-panel 佈局 |
-
-SVM                  ← 高維特徵空間
-
-Naive Bayes          ← 文本經典方法1. **模型訓練與評估** - 使用 Logistic Regression、Decision Tree、SVM 和 Naive Bayes| `plot_top_tokens_by_class()` | 文本分析 | TF-IDF 排序 |
+| 📋 Data Overview | 數據集瀏覽 |
 
 ```
 
-2. **模型性能對比** - 視覺化展示準確率、精準率、召回率等指標| + 4 個其他函數 | 更多分析 | 詳見文檔 |
+---
+
+---- [使用方式](#使用方式)
+
+## 🤖 機器學習模型
+
+### 本地運行
+
+```
+
+Logistic Regression  ← 線性基準```bash- [項目結構](#項目結構)
+
+Decision Tree        ← 非線性決策
+
+SVM                  ← 高維特徵空間# 克隆
+
+Naive Bayes          ← 文本經典方法
+
+```git clone https://github.com/Charles8745/AIoT_DA_HW3.git && cd AIoT_DA_HW3## 📋 Table of Contents- [實現細節](#實現細節)
+
+
 
 **工作流程**:
 
-```3. **實時推理** - 用戶可輸入文本並實時獲得分類結果
+```
 
-文本 → 預處理 & Tokenization → 特徵提取 → 模型推理 → Ham/Spam
-
-```4. **特徵分析** - 展示各類別的高頻 tokens 和詞頻統計### Phase 2: CLI Dashboard
-
-
-
----5. **數據概覽** - 交互式數據集探索和統計分析**`sources/cli_dashboard.py`** - 終端儀表板
-
-
-
-## 📊 數據集
-
-
-
-來源：[Hands-On AI for Cybersecurity](https://github.com/PacktPublishing/Hands-On-Artificial-Intelligence-for-Cybersecurity)### 使用的模型方式- 彩色表格顯示模型指標
-
-
-
-| 數據集 | 樣本數 | 特徵 |- 支援排序、過濾、搜尋
-
-|--------|--------|------|
-
-| SMS Spam | 5,575 | 文本 + 標籤 |系統使用以下機器學習模型進行垃圾郵件分類：- CSV/JSON 匯出（含時戳）
-
-| Phishing | - | 數值特徵 |
-
-| Perceptron | - | 簡化特徵 |- 統計摘要和排名
-
-| SVM | - | 特徵向量 |
-
-| 模型 | 演算法 | 用途 |
-
----
-
-|------|--------|------|### Phase 3: Streamlit Web App + Neumorphism UI
-
-## 📁 項目結構
-
-| **Logistic Regression** | 線性分類 | 基準模型，快速、可解釋性強 |**`sources/streamlit_app.py`** - 6 個互動式頁面
+文本 → 預處理 → Tokenization → 特徵提取 → 模型推理 → Ham/Spam# 安裝依賴- [測試](#測試)
 
 ```
 
-AIoT_DA_HW3/| **Decision Tree** | 樹型模型 | 非線性決策邊界，易於理解 |
+pip install -r config/requirements.txt
 
-├── 📄 README.md              # 本文件
+---
 
-├── 📄 LICENSE                # MIT 許可證| **Support Vector Machine (SVM)** | 核方法 | 高維特徵空間，強大的非線性分類 |**頁面:**
+- [Introduction](#introduction)- [貢獻指南](#貢獻指南)
+
+## 📊 數據集
+
+# 運行
+
+來源：[Hands-On AI for Cybersecurity](https://github.com/PacktPublishing/Hands-On-Artificial-Intelligence-for-Cybersecurity)
+
+streamlit run app/streamlit_app.py- [How to Use](#how-to-use)
+
+| 數據集 | 樣本 | 說明 |
+
+|--------|------|------|
+
+| sms_spam_no_header.csv | 5,575 | 文本 + 標籤 |
+
+| phishing_dataset.csv | - | 數值特徵 |# 打開 http://localhost:8501- [Source Reference](#source-reference)---
+
+| sms_spam_perceptron.csv | - | 簡化特徵 |
+
+| sms_spam_svm.csv | - | 特徵向量 |```
+
+
+
+---- [Setup](#setup)
+
+
+
+## 📁 項目結構📚 詳細步驟 → [INSTALL.md](docs/INSTALL.md)
+
+
+
+```- [Commands](#commands)## 🚀 功能概述
+
+AIoT_DA_HW3/
+
+├── README.md                   # 本文件---
+
+├── LICENSE                     # MIT 許可證
+
+├── requirements.txt            # 依賴列表- [Project Structure](#project-structure)
 
 │
 
-├── 🚀 app/                   # 應用程式 (880 行)| **Naive Bayes** | 概率模型 | 文本分類經典方法，效率高 |1. 📊 **Overview** - 模型摘要和比較
+├── sources/                    # 應用程式 (880 行)## 🎯 功能介紹
 
-│   ├── streamlit_app.py      # 主入口
+│   ├── streamlit_app.py        # 主應用
 
-│   ├── ui/                   # UI 組件2. 📈 **Metrics Explorer** - 詳細指標分析
+│   ├── defs.py                 # 工具函數- [Features](#features)### Phase 1: Core Visualization Engine
+
+│   ├── notifications.py        # 通知系統
+
+│   ├── form_components.py      # 表單驗證| 頁面 | 功能 |
+
+│   ├── caching.py              # 快取管理
+
+│   ├── performance_monitor.py  # 效能監控|------|------|**`sources/visualization.py`** - 10 個專業可視化函數
+
+│   ├── data_pagination.py      # 數據分頁
+
+│   └── *.ipynb (6個)           # Jupyter Notebooks| 📊 **Overview** | 所有模型性能儀表板 |
+
+│
+
+├── datasets/                   # 訓練數據| 📈 **Metrics Explorer** | 深入分析特定模型指標 |---
+
+│   └── *.csv (4個)
+
+│| ⚖️ **Model Comparison** | 模型性能對比（雷達圖） |
+
+└── .streamlit/                 # Streamlit 配置
+
+    └── config.toml| 🎮 **Live Playground** | 實時郵件分類推理 || 函數 | 功能 | 輸出 |
+
+```
+
+| 🎯 **Features** | 高頻詞彙分析 |
+
+---
+
+| 📋 **Data Overview** | 數據集統計瀏覽 |## 📖 Introduction|------|------|------|
+
+## 🔧 安裝與運行
+
+
+
+### 系統需求
+
+- Python 3.8+更多示例 → [USAGE.md](examples/USAGE.md)| `plot_training_curves()` | 訓練/驗證損失 & 準確度 | 2-panel 子圖 |
+
+- 2GB RAM
+
+
+
+### 安裝步驟
+
+---### 專案目的| `plot_feature_importance()` | 特徵重要性分析 | 排序條形圖 |
+
+```bash
+
+# 1. 克隆
+
+git clone https://github.com/Charles8745/AIoT_DA_HW3.git
+
+cd AIoT_DA_HW3## 🤖 機器學習模型| `plot_confusion_matrices_grid()` | 多模型混淆矩陣 | M×N 網格 |
+
+
+
+# 2. 虛擬環境
+
+python -m venv venv
+
+source venv/bin/activate      # macOS/Linux```本專案是一個**垃圾郵件分類系統**，用於演示多種機器學習模型在文本分類任務上的應用。系統包含以下核心功能：| `plot_roc_curves_overlay()` | ROC 曲線比較 | AUC 標籤 |
+
+# 或
+
+venv\Scripts\activate          # WindowsLogistic Regression  ← 線性基準
+
+
+
+# 3. 安裝依賴Decision Tree        ← 非線性決策| `plot_data_overview()` | 資料集統計 | 4-panel 佈局 |
+
+pip install -r requirements.txt
+
+SVM                  ← 高維特徵空間
+
+# 4. 運行
+
+cd sourcesNaive Bayes          ← 文本經典方法1. **模型訓練與評估** - 使用 Logistic Regression、Decision Tree、SVM 和 Naive Bayes| `plot_top_tokens_by_class()` | 文本分析 | TF-IDF 排序 |
+
+streamlit run streamlit_app.py
+
+``````
+
+
+
+### 運行命令2. **模型性能對比** - 視覺化展示準確率、精準率、召回率等指標| + 4 個其他函數 | 更多分析 | 詳見文檔 |
+
+
+
+```bash**工作流程**:
+
+# 標準運行
+
+streamlit run sources/streamlit_app.py```3. **實時推理** - 用戶可輸入文本並實時獲得分類結果
+
+
+
+# 指定端口文本 → 預處理 & Tokenization → 特徵提取 → 模型推理 → Ham/Spam
+
+streamlit run sources/streamlit_app.py --server.port 8502
+
+```4. **特徵分析** - 展示各類別的高頻 tokens 和詞頻統計### Phase 2: CLI Dashboard
+
+# 開發模式
+
+streamlit run sources/streamlit_app.py --client.runOnSave true
+
+```
+
+---5. **數據概覽** - 交互式數據集探索和統計分析**`sources/cli_dashboard.py`** - 終端儀表板
+
+---
+
+
+
+## 🎨 設計特色
+
+## 📊 數據集
+
+- ✨ **Neumorphism 設計** - 柔和陰影、漸變
+
+- 📊 **互動式圖表** - Plotly 動態可視化
+
+- 🔔 **通知系統** - Toast 提示反饋
+
+- ⚡ **性能優化** - TTL 快取、效能監控來源：[Hands-On AI for Cybersecurity](https://github.com/PacktPublishing/Hands-On-Artificial-Intelligence-for-Cybersecurity)### 使用的模型方式- 彩色表格顯示模型指標
+
+- 📱 **響應式布局** - 適配多種屏幕
+
+
+
+---
+
+| 數據集 | 樣本數 | 特徵 |- 支援排序、過濾、搜尋
+
+## 📚 完整文檔
+
+|--------|--------|------|
+
+| 文件 | 說明 |
+
+|------|------|| SMS Spam | 5,575 | 文本 + 標籤 |系統使用以下機器學習模型進行垃圾郵件分類：- CSV/JSON 匯出（含時戳）
+
+| README.md | 項目概覽 |
+
+| LICENSE | MIT 許可證 || Phishing | - | 數值特徵 |
+
+| requirements.txt | 依賴清單 |
+
+| Perceptron | - | 簡化特徵 |- 統計摘要和排名
+
+---
+
+| SVM | - | 特徵向量 |
+
+## 🔧 技術棧
+
+| 模型 | 演算法 | 用途 |
+
+| 層級 | 技術 |
+
+|------|------|---
+
+| **Frontend** | Streamlit 1.0+, Plotly 5.0+ |
+
+| **Backend** | Python 3.8+, pandas, numpy ||------|--------|------|### Phase 3: Streamlit Web App + Neumorphism UI
+
+| **ML** | scikit-learn, NLTK |
+
+| **Deploy** | Streamlit Cloud |## 📁 項目結構
+
+
+
+---| **Logistic Regression** | 線性分類 | 基準模型，快速、可解釋性強 |**`sources/streamlit_app.py`** - 6 個互動式頁面
+
+
+
+## 📈 評估指標```
+
+
+
+- **Accuracy** - 正確分類比例AIoT_DA_HW3/| **Decision Tree** | 樹型模型 | 非線性決策邊界，易於理解 |
+
+- **Precision** - 預測正確的 Spam 比例
+
+- **Recall** - 實際 Spam 被正確識別的比例├── 📄 README.md              # 本文件
+
+- **F1-Score** - 精準率與召回率的調和平均
+
+- **AUC-ROC** - 分類性能整體評估├── 📄 LICENSE                # MIT 許可證| **Support Vector Machine (SVM)** | 核方法 | 高維特徵空間，強大的非線性分類 |**頁面:**
+
+
+
+---│
+
+
+
+## 🔗 相關資源├── 🚀 app/                   # 應用程式 (880 行)| **Naive Bayes** | 概率模型 | 文本分類經典方法，效率高 |1. 📊 **Overview** - 模型摘要和比較
+
+
+
+- 📘 [Streamlit 文檔](https://docs.streamlit.io/)│   ├── streamlit_app.py      # 主入口
+
+- 📗 [scikit-learn 文檔](https://scikit-learn.org/)
+
+- 📙 [Plotly 文檔](https://plotly.com/python/)│   ├── ui/                   # UI 組件2. 📈 **Metrics Explorer** - 詳細指標分析
+
+- 📕 [NLTK 文檔](https://www.nltk.org/)
 
 │   │   ├── notifications.py  # 通知系統
 
+---
+
 │   │   ├── form_components.py # 表單驗證### 工作流程3. ⚖️ **Model Comparison** - 雷達圖和表格
+
+## 👤 聯絡方式
 
 │   │   └── performance_monitor.py
 
-│   └── utils/                # 工具函數4. 🎮 **Live Inference** - 參數控制推理
+- **Author**: Chen Xulin (陳旭霖)
+
+- **GitHub**: [Charles8745](https://github.com/Charles8745)│   └── utils/                # 工具函數4. 🎮 **Live Inference** - 參數控制推理
+
+- **Course**: AIoT Data Analytics 2025
 
 │       ├── defs.py          # 文本處理
 
+---
+
 │       ├── caching.py       # 快取管理```5. 🎯 **Feature Importance** - 特徵分析
+
+## 📜 許可證
 
 │       └── data_pagination.py
 
+MIT License - 詳見 [LICENSE](LICENSE)
+
 │原始文本6. 📋 **Data Overview** - 資料統計
 
-├── 📊 datasets/              # 訓練數據
+```
 
-│   ├── sms_spam_no_header.csv  ↓
+Copyright (c) 2025 Chen Xulin├── 📊 datasets/              # 訓練數據
 
-│   ├── sms_spam_perceptron.csv
 
-│   ├── sms_spam_svm.csv預處理 (Tokenization, 標準化)**Neumorphism Design:**
 
-│   └── phishing_dataset.csv
+本專案包含來自 Hands-On Artificial Intelligence for Cybersecurity │   ├── sms_spam_no_header.csv  ↓
+
+的數據集和參考程式碼（教育用途）。
+
+```│   ├── sms_spam_perceptron.csv
+
+
+
+---│   ├── sms_spam_svm.csv預處理 (Tokenization, 標準化)**Neumorphism Design:**
+
+
+
+**版本**: 2.0.0 (Stable) | **更新**: 2025年10月29日│   └── phishing_dataset.csv
+
 
 │  ↓- 柔和陰影和漸層
 
