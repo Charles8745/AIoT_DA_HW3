@@ -18,6 +18,16 @@ import plotly.graph_objects as go
 import plotly.express as px
 from pathlib import Path
 
+# Import new UI/UX modules
+try:
+    from themes import get_theme_manager
+    from notifications import get_toast_manager, NotificationLevel
+    from performance_monitor import get_performance_monitor, timeit
+    from caching import get_cache_manager
+except ImportError:
+    # Fallback if modules not available
+    pass
+
 
 # ============================================================================
 # NEUMORPHISM DESIGN SYSTEM
@@ -292,41 +302,61 @@ def page_metrics_explorer():
     
     evaluator = st.session_state.evaluators[selected_idx]
     
-    # Metrics display
-    col1, col2, col3 = st.columns(3)
+    # Create tabs for metrics and performance monitoring
+    tab1, tab2 = st.tabs(["📊 Metrics", "⚡ Performance Monitor"])
     
-    with col1:
-        st.metric("Accuracy", f"{getattr(evaluator, 'accuracy_test', 0):.1%}")
-    with col2:
-        st.metric("Precision", f"{getattr(evaluator, 'precision_test', 0):.1%}")
-    with col3:
-        st.metric("Recall", f"{getattr(evaluator, 'recall_test', 0):.1%}")
+    with tab1:
+        # Metrics display
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.metric("Accuracy", f"{getattr(evaluator, 'accuracy_test', 0):.1%}")
+        with col2:
+            st.metric("Precision", f"{getattr(evaluator, 'precision_test', 0):.1%}")
+        with col3:
+            st.metric("Recall", f"{getattr(evaluator, 'recall_test', 0):.1%}")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.metric("F1-Score", f"{getattr(evaluator, 'f1_test', 0):.1%}")
+        with col2:
+            st.metric("AUC-ROC", f"{getattr(evaluator, 'auc_roc_test', 0):.3f}")
+        
+        # Training history (if available)
+        if hasattr(evaluator, 'history') and evaluator.history:
+            st.markdown("#### Training History")
+            history = evaluator.history
+            
+            fig = go.Figure()
+            
+            if 'loss' in history:
+                fig.add_trace(go.Scatter(y=history['loss'], name='Training Loss',
+                                        mode='lines', line=dict(color='#d4a574')))
+            
+            if 'val_loss' in history:
+                fig.add_trace(go.Scatter(y=history['val_loss'], name='Validation Loss',
+                                        mode='lines', line=dict(color='#8b7d6b')))
+            
+            fig.update_layout(hovermode='x unified', height=400,
+                             template='plotly_white')
+            st.plotly_chart(fig, use_container_width=True)
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.metric("F1-Score", f"{getattr(evaluator, 'f1_test', 0):.1%}")
-    with col2:
-        st.metric("AUC-ROC", f"{getattr(evaluator, 'auc_roc_test', 0):.3f}")
-    
-    # Training history (if available)
-    if hasattr(evaluator, 'history') and evaluator.history:
-        st.markdown("#### Training History")
-        history = evaluator.history
-        
-        fig = go.Figure()
-        
-        if 'loss' in history:
-            fig.add_trace(go.Scatter(y=history['loss'], name='Training Loss',
-                                    mode='lines', line=dict(color='#d4a574')))
-        
-        if 'val_loss' in history:
-            fig.add_trace(go.Scatter(y=history['val_loss'], name='Validation Loss',
-                                    mode='lines', line=dict(color='#8b7d6b')))
-        
-        fig.update_layout(hovermode='x unified', height=400,
-                         template='plotly_white')
-        st.plotly_chart(fig, use_container_width=True)
+    with tab2:
+        # Performance monitoring tab
+        try:
+            perf_monitor = get_performance_monitor()
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("#### 📊 Performance Metrics")
+                perf_monitor.display_metrics()
+            
+            with col2:
+                st.markdown("#### 🔴 Bottlenecks")
+                perf_monitor.display_bottlenecks(limit=5)
+        except:
+            st.info("💡 Performance monitoring module not available")
 
 
 # ============================================================================
@@ -393,6 +423,12 @@ def page_live_inference():
     """Display live inference playground with Neumorphism UI."""
     st.markdown(NEUMORPHISM_CSS, unsafe_allow_html=True)
     
+    # Get managers for feedback
+    try:
+        toast_manager = get_toast_manager()
+    except:
+        toast_manager = None
+    
     st.markdown("""
     <div class="header-section">
         <h2>🎮 Live Inference Playground</h2>
@@ -435,10 +471,21 @@ def page_live_inference():
         )
     
     if predict_button and input_text:
+        # Validate input
+        if len(input_text.strip()) == 0:
+            if toast_manager:
+                toast_manager.show_error("Please enter some text to predict!")
+            st.error("❌ Please enter some text to predict!")
+            return
+        
         # Simulate prediction (real implementation would use actual model)
         with st.spinner("🔄 Predicting..."):
             prediction = np.random.random()
             confidence = np.random.random()
+        
+        # Show success toast
+        if toast_manager:
+            toast_manager.show_success(f"✅ Prediction complete! Confidence: {confidence:.2%}")
         
         # Display results with Neumorphism cards
         col1, col2, col3 = st.columns(3)
@@ -511,49 +558,113 @@ def page_live_inference():
 # ============================================================================
 
 def page_feature_importance():
-    """Display feature importance analysis."""
+    """Display top tokens by class (Ham vs Spam)."""
     st.markdown(NEUMORPHISM_CSS, unsafe_allow_html=True)
-    st.markdown("### 🎯 Feature Importance")
+    st.markdown("### 🎯 Top Tokens by Class")
     
-    if not st.session_state.evaluators:
-        st.warning("No models loaded.")
+    if not st.session_state.data_loaded:
+        st.warning("No data loaded. Please load data first.")
         return
     
-    # Model selection
-    model_names = [getattr(e, 'model_name', f'Model {i+1}') 
-                   for i, e in enumerate(st.session_state.evaluators)]
-    selected_idx = st.selectbox("Select Model:", range(len(model_names)), 
-                                format_func=lambda x: model_names[x],
-                                key='feature_model')
+    # Load data
+    try:
+        df_train = pd.read_csv(st.session_state.train_path) if st.session_state.train_path else None
+        if df_train is None:
+            st.warning("Training data not available.")
+            return
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return
     
-    # Simulated feature importance
-    top_n = st.slider("Top N Features:", 5, 30, 15)
+    # Top N tokens slider
+    top_n = st.slider("Top N Tokens:", 5, 30, 15)
     
-    features = [f'Feature_{i}' for i in range(top_n)]
-    importance = np.random.random(top_n)
-    importance = importance / importance.sum()
+    # Process tokens for each class
+    from defs import get_tokens
     
-    df = pd.DataFrame({
-        'Feature': features,
-        'Importance': importance
-    }).sort_values('Importance', ascending=True)
+    ham_tokens = []
+    spam_tokens = []
     
-    fig = go.Figure(data=[
-        go.Bar(y=df['Feature'], x=df['Importance'], orientation='h',
-               marker=dict(color=df['Importance'], 
-                          colorscale='Viridis', showscale=False))
-    ])
+    for idx, row in df_train.iterrows():
+        tokens = get_tokens(row.get('text', row.get('message', '')))
+        label = row.get('label', row.get('class', ''))
+        
+        if label == 0 or label == 'ham':
+            ham_tokens.extend(tokens)
+        elif label == 1 or label == 'spam':
+            spam_tokens.extend(tokens)
     
-    fig.update_layout(
-        height=500,
-        title="Feature Importance Scores",
-        xaxis_title="Importance",
-        yaxis_title="Feature",
-        template='plotly_white',
-        showlegend=False,
-    )
+    # Count token frequencies
+    from collections import Counter
+    ham_counter = Counter(ham_tokens)
+    spam_counter = Counter(spam_tokens)
     
-    st.plotly_chart(fig, use_container_width=True)
+    # Get top tokens
+    top_ham = ham_counter.most_common(top_n)
+    top_spam = spam_counter.most_common(top_n)
+    
+    # Create comparison visualization
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 📧 Ham Tokens")
+        if top_ham:
+            df_ham = pd.DataFrame(top_ham, columns=['Token', 'Frequency']).sort_values('Frequency', ascending=True)
+            fig_ham = go.Figure(data=[
+                go.Bar(y=df_ham['Token'], x=df_ham['Frequency'], orientation='h',
+                       marker=dict(color='#2ecc71', showscale=False))
+            ])
+            fig_ham.update_layout(
+                height=400,
+                title="Most Common Tokens in Ham Messages",
+                xaxis_title="Frequency",
+                yaxis_title="Token",
+                template='plotly_white',
+                showlegend=False,
+            )
+            st.plotly_chart(fig_ham, use_container_width=True)
+        else:
+            st.info("No ham tokens found.")
+    
+    with col2:
+        st.markdown("#### 🚨 Spam Tokens")
+        if top_spam:
+            df_spam = pd.DataFrame(top_spam, columns=['Token', 'Frequency']).sort_values('Frequency', ascending=True)
+            fig_spam = go.Figure(data=[
+                go.Bar(y=df_spam['Token'], x=df_spam['Frequency'], orientation='h',
+                       marker=dict(color='#e74c3c', showscale=False))
+            ])
+            fig_spam.update_layout(
+                height=400,
+                title="Most Common Tokens in Spam Messages",
+                xaxis_title="Frequency",
+                yaxis_title="Token",
+                template='plotly_white',
+                showlegend=False,
+            )
+            st.plotly_chart(fig_spam, use_container_width=True)
+        else:
+            st.info("No spam tokens found.")
+    
+    # Display token frequency tables
+    st.markdown("---")
+    st.markdown("#### 📊 Token Frequency Details")
+    
+    tab1, tab2 = st.tabs(["Ham Tokens", "Spam Tokens"])
+    
+    with tab1:
+        if top_ham:
+            df_ham_display = pd.DataFrame(top_ham, columns=['Token', 'Frequency'])
+            st.dataframe(df_ham_display, use_container_width=True)
+        else:
+            st.info("No ham tokens found.")
+    
+    with tab2:
+        if top_spam:
+            df_spam_display = pd.DataFrame(top_spam, columns=['Token', 'Frequency'])
+            st.dataframe(df_spam_display, use_container_width=True)
+        else:
+            st.info("No spam tokens found.")
 
 
 # ============================================================================
@@ -612,6 +723,28 @@ def page_data_overview():
                 color_discrete_sequence=['#d4a574', '#8b7d6b'])
     
     st.plotly_chart(fig, use_container_width=True)
+    
+    # Sample data with pagination
+    st.markdown("#### 📋 Sample Data")
+    
+    # Create sample data
+    sample_data = pd.DataFrame({
+        'ID': range(1, 251),
+        'Text': [f'Sample message {i}' for i in range(1, 251)],
+        'Length': np.random.randint(50, 500, 250),
+        'Class': np.random.choice(['Ham', 'Spam'], 250),
+        'Confidence': np.random.random(250),
+    })
+    
+    # Try to use paginator if available
+    try:
+        from data_pagination import get_paginator
+        paginator = get_paginator(items_per_page=20)
+        paginator.display_with_pagination(sample_data)
+    except:
+        # Fallback to simple display
+        st.dataframe(sample_data.head(50), use_container_width=True)
+        st.info("💡 Tip: Install pagination module for better data handling with large datasets")
 
 
 # ============================================================================
@@ -628,6 +761,14 @@ def main():
     )
     
     initialize_session_state()
+    
+    # Initialize UI/UX managers
+    theme_manager = get_theme_manager()
+    toast_manager = get_toast_manager()
+    perf_monitor = get_performance_monitor()
+    
+    # Display toast notifications at top of page
+    toast_manager.render()
     
     # Sidebar navigation
     st.sidebar.markdown("## 🧭 Navigation")
@@ -647,8 +788,16 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.markdown("## ⚙️ Settings")
     
-    theme = st.sidebar.selectbox("Theme:", ["Neumorphism", "Light", "Dark"])
-    st.session_state.theme_mode = theme.lower()
+    # Theme toggle
+    col1, col2 = st.sidebar.columns([1, 2])
+    with col1:
+        st.markdown("Theme:")
+    with col2:
+        current_theme = theme_manager.get_theme_name()
+        theme_icon = "🌙" if current_theme == "light" else "☀️"
+        if st.button(f"{theme_icon} Toggle Theme", use_container_width=True):
+            new_theme = theme_manager.toggle_theme()
+            toast_manager.show_success(f"Theme changed to {new_theme} mode!")
     
     # Load sample evaluators for demonstration
     st.sidebar.markdown("---")
@@ -669,10 +818,10 @@ def main():
             MockEvaluator("SVM"),
             MockEvaluator("Naive Bayes"),
         ]
-        st.success("✅ Sample models loaded!")
+        toast_manager.show_success("✅ Sample models loaded!")
     
     st.sidebar.markdown("---")
-    st.sidebar.markdown("📍 **App Version**: 1.0.0")
+    st.sidebar.markdown("📍 **App Version**: 2.0.0 (Enhanced)")
     st.sidebar.markdown("🔧 **Status**: Production")
     
     # Render selected page
