@@ -190,7 +190,22 @@ body {
 def initialize_session_state():
     """Initialize Streamlit session state variables."""
     if 'evaluators' not in st.session_state:
-        st.session_state.evaluators = []
+        # Auto-load sample models on initialization
+        class MockEvaluator:
+            def __init__(self, name):
+                self.model_name = name
+                self.accuracy_test = np.random.random() * 0.3 + 0.7
+                self.precision_test = np.random.random() * 0.3 + 0.7
+                self.recall_test = np.random.random() * 0.3 + 0.7
+                self.f1_test = np.random.random() * 0.3 + 0.7
+                self.auc_roc_test = np.random.random() * 0.3 + 0.7
+        
+        st.session_state.evaluators = [
+            MockEvaluator("Logistic Regression"),
+            MockEvaluator("Decision Tree"),
+            MockEvaluator("SVM"),
+            MockEvaluator("Naive Bayes"),
+        ]
     
     if 'selected_model' not in st.session_state:
         st.session_state.selected_model = None
@@ -609,21 +624,55 @@ def page_feature_importance():
     except ImportError:
         # Fallback tokenizer if defs not available
         def get_tokens(text):
-            return text.lower().split()
+            import re
+            text = str(text).lower()
+            text = re.sub(r'[^a-z0-9\s]', ' ', text)
+            return [t for t in text.split() if t.strip()]
     
     ham_tokens = []
     spam_tokens = []
     
+    # Determine the text and label column names
+    columns = df_train.columns.tolist()
+    
+    # Find text column (usually 'text', 'message', or column 1)
+    text_col = None
+    if 'text' in columns:
+        text_col = 'text'
+    elif 'message' in columns:
+        text_col = 'message'
+    elif len(columns) > 1:
+        text_col = columns[1]  # Second column if exists
+    else:
+        text_col = columns[0] if columns else None
+    
+    # Find label column (usually 'label', 'class', or column 0)
+    label_col = None
+    if 'label' in columns:
+        label_col = 'label'
+    elif 'class' in columns:
+        label_col = 'class'
+    elif len(columns) > 0:
+        label_col = columns[0]  # First column if exists
+    
+    st.write(f"🔍 Debug: text_col={text_col}, label_col={label_col}")
+    st.write(f"📊 Columns: {columns}")
+    st.write(f"📈 Total rows: {len(df_train)}")
+    
     for idx, row in df_train.iterrows():
-        text = row.get('text', row.get('message', ''))
-        label = row.get('label', row.get('class', ''))
+        # Extract text and label safely
+        text = str(row[text_col]) if text_col and text_col in row else ''
+        label = str(row[label_col]).lower() if label_col and label_col in row else ''
         
-        tokens = get_tokens(text) if callable(locals().get('get_tokens')) else text.lower().split()
-        
-        if label == 0 or str(label).lower() == 'ham':
-            ham_tokens.extend(tokens)
-        elif label == 1 or str(label).lower() == 'spam':
-            spam_tokens.extend(tokens)
+        # Only process if we have valid text
+        if text and text != 'nan':
+            tokens = get_tokens(text)
+            
+            # Classify based on label
+            if label in ['ham', '0'] or label == 'ham':
+                ham_tokens.extend(tokens)
+            elif label in ['spam', '1'] or label == 'spam':
+                spam_tokens.extend(tokens)
     
     # Count token frequencies
     from collections import Counter
@@ -817,27 +866,6 @@ def main():
     # Sidebar settings
     st.sidebar.markdown("---")
     st.sidebar.markdown("## ⚙️ Settings")
-    
-    # Load sample evaluators for demonstration
-    st.sidebar.markdown("---")
-    if st.sidebar.button("📥 Load Sample Models"):
-        # Create mock evaluator objects
-        class MockEvaluator:
-            def __init__(self, name):
-                self.model_name = name
-                self.accuracy_test = np.random.random() * 0.3 + 0.7
-                self.precision_test = np.random.random() * 0.3 + 0.7
-                self.recall_test = np.random.random() * 0.3 + 0.7
-                self.f1_test = np.random.random() * 0.3 + 0.7
-                self.auc_roc_test = np.random.random() * 0.3 + 0.7
-        
-        st.session_state.evaluators = [
-            MockEvaluator("Logistic Regression"),
-            MockEvaluator("Decision Tree"),
-            MockEvaluator("SVM"),
-            MockEvaluator("Naive Bayes"),
-        ]
-        toast_manager.show_success("✅ Sample models loaded!")
     
     st.sidebar.markdown("---")
     st.sidebar.markdown("📍 **App Version**: 2.0.0 (Enhanced)")
