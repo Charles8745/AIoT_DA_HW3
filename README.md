@@ -21,10 +21,6 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
 
 **Online**: https://aiotdahw3-cotefkivlbvbcnga3mapux.streamlit.app/
-![License](https://img.shields.io/badge/License-MIT-green)**課程**: AIoT Data Analytics 2025 - 作業 3
-
-無需安裝，直接體驗！
-
 
 
 ---
