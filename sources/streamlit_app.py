@@ -20,18 +20,12 @@ from pathlib import Path
 
 # Import new UI/UX modules
 try:
-    from app.ui.notifications import get_toast_manager, NotificationLevel
-    from app.ui.performance_monitor import get_performance_monitor, timeit
-    from app.utils.caching import get_cache_manager
+    from notifications import get_toast_manager, NotificationLevel
+    from performance_monitor import get_performance_monitor, timeit
+    from caching import get_cache_manager
 except ImportError:
-    try:
-        # Fallback for relative imports
-        from ui.notifications import get_toast_manager, NotificationLevel
-        from ui.performance_monitor import get_performance_monitor, timeit
-        from utils.caching import get_cache_manager
-    except ImportError:
-        # Fallback if modules not available
-        pass
+    # Fallback if modules not available
+    pass
 
 
 # ============================================================================
@@ -626,17 +620,14 @@ def page_feature_importance():
     
     # Process tokens for each class
     try:
-        from app.utils.defs import get_tokens
+        from defs import get_tokens
     except ImportError:
-        try:
-            from utils.defs import get_tokens
-        except ImportError:
-            # Fallback tokenizer if defs not available
-            def get_tokens(text):
-                import re
-                text = str(text).lower()
-                text = re.sub(r'[^a-z0-9\s]', ' ', text)
-                return [t for t in text.split() if t.strip()]
+        # Fallback tokenizer if defs not available
+        def get_tokens(text):
+            import re
+            text = str(text).lower()
+            text = re.sub(r'[^a-z0-9\s]', ' ', text)
+            return [t for t in text.split() if t.strip()]
     
     ham_tokens = []
     spam_tokens = []
@@ -827,18 +818,13 @@ def page_data_overview():
     
     # Try to use paginator if available
     try:
-        from app.utils.data_pagination import get_paginator
+        from data_pagination import get_paginator
         paginator = get_paginator(items_per_page=20)
         paginator.display_with_pagination(sample_data)
-    except ImportError:
-        try:
-            from utils.data_pagination import get_paginator
-            paginator = get_paginator(items_per_page=20)
-            paginator.display_with_pagination(sample_data)
-        except:
-            # Fallback to simple display
-            st.dataframe(sample_data.head(50), use_container_width=True)
-            st.info("💡 Tip: Install pagination module for better data handling with large datasets")
+    except:
+        # Fallback to simple display
+        st.dataframe(sample_data.head(50), use_container_width=True)
+        st.info("💡 Tip: Install pagination module for better data handling with large datasets")
 
 
 # ============================================================================
