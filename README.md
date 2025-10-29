@@ -2,7 +2,7 @@
 
 
 
-**AIoT Data Analytics 2025 - HW3** | Author: Chen Xulin (陳旭霖)
+**AIoT Data Analytics 2025 - HW3** | Author: Chen Xulin 
 
 
 
